@@ -1,7 +1,10 @@
 # Requires pymongo
 import pymongo
-import mongohq
+#import mongohq
 
+import csv
+import sys
+from itertools import islice
 from pymongo import MongoClient
 
 
@@ -12,7 +15,17 @@ from pymongo import MongoClient
 # ideagenstestURI = "mongodb://sandbox:protolab1@kahana.mongohq.com:10056/"
 # ideagenstestDBName = 'IdeaGensTest'
 
-# client = MongoClient(ideagenstestURI)
-# db = client[ideagenstestDBName]
+client = MongoClient(sys.argv[1])
+db = client['meteor']
+ideasToProc = db.ideasToProcess
+
+with open("./data/Mike_Terry_instance.csv", "rU") as csvfile:
+	datareader = csv.reader(csvfile, delimiter=",")
+	for row in datareader:
+		data = row
+		if(data[3] == 'iPod'): #just get answers to iPod prompt
+			idea = {'content': data[8], 'participantID': data[1]}
+			idea_id = ideasToProc.insert(idea)
+			#print "_id: %s, participantID: %s, content: %s" % (idea_id, idea['participantID'], idea['content']) 
 
 
